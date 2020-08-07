@@ -1,5 +1,5 @@
 {
-  "name": "ngx-tree-select",
+  "name": "ngx-tree-select-direct-entities",
   "version": "0.15.0",
   "description": "Angular component for select with tree items.",
   "keywords": [
