@@ -24,7 +24,7 @@ export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
 };
 
 @Component({
-  selector: "tree-select",
+  selector: "tree-select-direct-entities",
   templateUrl: "./tree-select.component.html",
   providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR, SelectService],
   styleUrls: ["./tree-select.component.scss"],
