@@ -1,4 +1,4 @@
-import { SelectService } from '../services/select.service';
+import { SelectService } from "../services/select.service";
 
 export class SelectableItem {
   public _selected = false;
@@ -7,8 +7,12 @@ export class SelectableItem {
   public matchFilter = true;
   public isVisible = false;
 
-  constructor(public id: string, public text: string, public data: any, public svc: SelectService) {
-  }
+  constructor(
+    public id: string,
+    public text: string,
+    public data: any,
+    public svc: SelectService
+  ) {}
 
   get hasChild(): boolean {
     return this.children && this.children.length > 0;
@@ -35,7 +39,7 @@ export class SelectableItem {
         if (this.svc.Configuration.allowParentSelection) {
           return this._selected;
         } else {
-          return this._selected = false;
+          return (this._selected = false);
         }
       }
       return false;
@@ -48,12 +52,16 @@ export class SelectableItem {
     return this._selected;
   }
   set selected(value: boolean) {
-    if (this.hasChild && !this.svc.Configuration.allowParentSelection) {
-      if (value !== null) {
-        this.children.forEach((child) => child.selected = value);
-      }
-    } else {
-      this._selected = value;
+    // IPPON START
+    this._selected = value;
+    if (
+      this.svc.Configuration.includeDirectEntities &&
+      this.svc.Configuration.iterationThroughSelector < 1
+    ) {
+      this.svc.Configuration.iterationThroughSelector++;
+      this.children.forEach((child) => (child.selected = value));
+      this.svc.Configuration.iterationThroughSelector = 0;
     }
+    // IPPON END
   }
 }

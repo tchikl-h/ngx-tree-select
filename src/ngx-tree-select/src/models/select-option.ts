@@ -1,17 +1,21 @@
-import { ExpandMode } from './expand-mode';
+import { ExpandMode } from "./expand-mode";
 
 export class SelectOption {
-  public idProperty = 'id';
-  public textProperty = 'text';
+  public idProperty = "id";
+  public textProperty = "text";
   public childProperty: string = null;
   public allowMultiple = false;
   public closeOnSelection = true;
   public items: any[] = [];
   public model: any[] | any;
   public isOpen = false;
-  public filter = '';
+  public filter = "";
   public filterCaseSensitive = false;
   public allowParentSelection = false;
+  // IPPON START
+  public includeDirectEntities = false;
+  public iterationThroughSelector = 0;
+  // IPPON END
   public restructureWhenChildSameName = false;
   public maxVisibleItemCount: number;
   public expandMode = ExpandMode.None;
@@ -21,11 +25,11 @@ export class SelectOption {
   }
 
   public get filterExpandMode(): ExpandMode {
-     if (this.filter !== '') {
-        return ExpandMode.All;
-     } else {
-       return this.expandMode;
-     }
+    if (this.filter !== "") {
+      return ExpandMode.All;
+    } else {
+      return this.expandMode;
+    }
   }
 
   public displayCheckbox(): boolean {
@@ -34,10 +38,16 @@ export class SelectOption {
 
   public isValid(): boolean {
     // Check id property value
-    return this.idProperty && this.idProperty.trim().length > 0 &&
+    return (
+      this.idProperty &&
+      this.idProperty.trim().length > 0 &&
       // Check text property value
-      this.textProperty && this.textProperty.trim().length > 0 &&
+      this.textProperty &&
+      this.textProperty.trim().length > 0 &&
       // Check items value
-      this.items && Array.isArray(this.items) && this.items.length > 0;
+      this.items &&
+      Array.isArray(this.items) &&
+      this.items.length > 0
+    );
   }
 }

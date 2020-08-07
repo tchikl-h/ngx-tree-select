@@ -1,16 +1,11 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output
-  } from '@angular/core';
-import { SelectableItem } from '../models/selectable-item';
-import { SelectService } from '../services/select.service';
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { SelectableItem } from "../models/selectable-item";
+import { SelectService } from "../services/select.service";
 
 @Component({
-  selector: 'tree-select-item',
-  templateUrl: './tree-select-item.component.html',
-  styleUrls: ['./tree-select-item.component.scss']
+  selector: "tree-select-item",
+  templateUrl: "./tree-select-item.component.html",
+  styleUrls: ["./tree-select-item.component.scss"],
 })
 export class TreeSelectItemComponent {
   public get isOpen() {
@@ -22,9 +17,7 @@ export class TreeSelectItemComponent {
   @Input()
   public item: SelectableItem;
 
-  public constructor(
-    private svc: SelectService
-  ) { }
+  public constructor(private svc: SelectService) {}
 
   public toggleOpen($event: any) {
     $event.stopPropagation();
@@ -39,17 +32,35 @@ export class TreeSelectItemComponent {
     return this.svc.Configuration.allowParentSelection;
   }
 
+  // IPPON START
+  get iterationThroughSelector(): number {
+    return this.svc.Configuration.iterationThroughSelector;
+  }
+
+  get includeDirectEntities(): boolean {
+    return this.svc.Configuration.includeDirectEntities;
+  }
+  // IPPON END
+
   get restructureWhenChildSameName(): boolean {
     return this.svc.Configuration.restructureWhenChildSameName;
   }
 
   get needCheckBox(): boolean {
-    return this.svc.Configuration.isHierarchy() && this.svc.Configuration.allowMultiple;
+    return (
+      this.svc.Configuration.isHierarchy() &&
+      this.svc.Configuration.allowMultiple
+    );
   }
 
   public get haveChildren(): boolean {
-    if (this.restructureWhenChildSameName && this.item && this.item.children
-       && this.item.children.length === 1 && this.item.text === this.item.children[0].text) {
+    if (
+      this.restructureWhenChildSameName &&
+      this.item &&
+      this.item.children &&
+      this.item.children.length === 1 &&
+      this.item.text === this.item.children[0].text
+    ) {
       this.item = this.item.children[0];
     }
     return this.item && this.item.children && this.item.children.length > 0;
@@ -57,9 +68,11 @@ export class TreeSelectItemComponent {
 
   public select($event: any): void {
     $event.stopPropagation();
-    if (this.svc.Configuration.allowMultiple ||
-        !this.haveChildren ||
-        this.svc.Configuration.allowParentSelection) {
+    if (
+      this.svc.Configuration.allowMultiple ||
+      !this.haveChildren ||
+      this.svc.Configuration.allowParentSelection
+    ) {
       this.svc.toggleItemSelection(this.item);
     }
     this.onTouchedCallBack();

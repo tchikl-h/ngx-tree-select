@@ -3,15 +3,15 @@ import {
   forwardRef,
   HostListener,
   Input,
-  OnInit
-  } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ItemPipe } from '../pipes/item.pipe';
-import { SelectableItem } from '../models/selectable-item';
-import { SelectOption } from '../models/select-option';
-import { SelectService } from '../services/select.service';
-import { TreeSelectDefaultOptions } from '../models/tree-select-default-options';
-import { ExpandMode } from '../models/expand-mode';
+  OnInit,
+} from "@angular/core";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { ItemPipe } from "../pipes/item.pipe";
+import { SelectableItem } from "../models/selectable-item";
+import { SelectOption } from "../models/select-option";
+import { SelectService } from "../services/select.service";
+import { TreeSelectDefaultOptions } from "../models/tree-select-default-options";
+import { ExpandMode } from "../models/expand-mode";
 
 // tslint:disable-next-line:no-empty
 const noop = () => {};
@@ -20,22 +20,22 @@ export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
   // tslint:disable-next-line:no-forward-ref
   useExisting: forwardRef(() => TreeSelectComponent),
-  multi: true
+  multi: true,
 };
 
 @Component({
-  selector: 'tree-select',
-  templateUrl: './tree-select.component.html',
+  selector: "tree-select",
+  templateUrl: "./tree-select.component.html",
   providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR, SelectService],
-  styleUrls: ['./tree-select.component.scss']
+  styleUrls: ["./tree-select.component.scss"],
 })
 export class TreeSelectComponent implements ControlValueAccessor {
   public onTouchedCallback: () => void = noop;
   public showMoreLink = false;
   public moreLoaded = false;
   @Input() public disabled = false;
-  @Input() public placeholder = '';
-  @Input() public filterPlaceholder = 'Type here for filtering items...';
+  @Input() public placeholder = "";
+  @Input() public filterPlaceholder = "Type here for filtering items...";
   @Input() public allowFilter = true;
   private _isOpen = false;
   private onChangeCallback: (_: any) => void = noop;
@@ -49,26 +49,58 @@ export class TreeSelectComponent implements ControlValueAccessor {
 
   @Input()
   public set idField(value: string) {
-    this.svc.setConfiguration((opt) => opt.idProperty = value, true);
+    this.svc.setConfiguration((opt) => (opt.idProperty = value), true);
   }
 
   @Input()
   public set textField(value: string) {
-    this.svc.setConfiguration((opt) => opt.textProperty = value, true);
+    this.svc.setConfiguration((opt) => (opt.textProperty = value), true);
   }
 
   @Input()
   public set allowParentSelection(value: boolean) {
-    this.svc.setConfiguration((opt) => opt.allowParentSelection = value, true);
+    this.svc.setConfiguration(
+      (opt) => (opt.allowParentSelection = value),
+      true
+    );
   }
 
   public get allowParentSelection(): boolean {
     return this.svc.Configuration.allowParentSelection;
   }
 
+  // IPPON START
+  @Input()
+  public set iterationThroughSelector(value: number) {
+    this.svc.setConfiguration(
+      (opt) => (opt.iterationThroughSelector = value),
+      true
+    );
+  }
+
+  public get iterationThroughSelector(): number {
+    return this.svc.Configuration.iterationThroughSelector;
+  }
+
+  @Input()
+  public set includeDirectEntities(value: boolean) {
+    this.svc.setConfiguration(
+      (opt) => (opt.includeDirectEntities = value),
+      true
+    );
+  }
+
+  public get includeDirectEntities(): boolean {
+    return this.svc.Configuration.includeDirectEntities;
+  }
+  // IPPON END
+
   @Input()
   public set restructureWhenChildSameName(value: boolean) {
-    this.svc.setConfiguration((opt) => opt.restructureWhenChildSameName = value, true);
+    this.svc.setConfiguration(
+      (opt) => (opt.restructureWhenChildSameName = value),
+      true
+    );
   }
 
   public get restructureWhenChildSameName(): boolean {
@@ -77,12 +109,12 @@ export class TreeSelectComponent implements ControlValueAccessor {
 
   @Input()
   public set childrenField(value: string) {
-    this.svc.setConfiguration((opt) => opt.childProperty = value, true);
+    this.svc.setConfiguration((opt) => (opt.childProperty = value), true);
   }
 
   @Input()
   public set multiple(value: boolean) {
-    this.svc.setConfiguration((opt) => opt.allowMultiple = value, true);
+    this.svc.setConfiguration((opt) => (opt.allowMultiple = value), true);
   }
   public get multiple(): boolean {
     return this.svc.Configuration.allowMultiple;
@@ -90,7 +122,7 @@ export class TreeSelectComponent implements ControlValueAccessor {
 
   @Input()
   public set filterCaseSensitive(value: boolean) {
-    this.svc.setConfiguration((opt) => opt.filterCaseSensitive = value, true);
+    this.svc.setConfiguration((opt) => (opt.filterCaseSensitive = value), true);
   }
   public get filterCaseSensitive(): boolean {
     return this.svc.Configuration.filterCaseSensitive;
@@ -98,7 +130,7 @@ export class TreeSelectComponent implements ControlValueAccessor {
 
   @Input()
   public set expandMode(value: string) {
-    this.svc.setConfiguration((opt) => opt.expandMode = value, true);
+    this.svc.setConfiguration((opt) => (opt.expandMode = value), true);
     this.svc.setExpand();
   }
   public get expandMode(): string {
@@ -107,7 +139,7 @@ export class TreeSelectComponent implements ControlValueAccessor {
 
   @Input()
   public set maxVisibleItemCount(value: number) {
-    this.svc.setConfiguration((opt) => opt.maxVisibleItemCount = value, true);
+    this.svc.setConfiguration((opt) => (opt.maxVisibleItemCount = value), true);
   }
   public get maxVisibleItemCount(): number {
     return this.svc.Configuration.maxVisibleItemCount;
@@ -118,10 +150,9 @@ export class TreeSelectComponent implements ControlValueAccessor {
   }
 
   public get selection(): SelectableItem[] {
-    this.showMoreLink = (
+    this.showMoreLink =
       this.maxVisibleItemCount > 0 &&
-      ((this.svc.getInternalSelection().length - this.maxVisibleItemCount) > 0)
-    );
+      this.svc.getInternalSelection().length - this.maxVisibleItemCount > 0;
     return this.svc.getInternalSelection();
   }
 
@@ -130,7 +161,7 @@ export class TreeSelectComponent implements ControlValueAccessor {
   }
 
   public set filter(value: string) {
-    this.svc.setConfiguration((opt) => opt.filter = value, false);
+    this.svc.setConfiguration((opt) => (opt.filter = value), false);
     for (const item of this.internalItems) {
       this.ProcessMatchFilterTreeItem(item, this.svc.Configuration.filter);
     }
@@ -146,28 +177,29 @@ export class TreeSelectComponent implements ControlValueAccessor {
     this.svc.modelChanged$.subscribe((result) => {
       this.onChangeCallback(result);
     });
-    this.maxVisibleItemCount = (defaultOpts.maxVisibleItemCount || 0);
-    this.allowParentSelection = (
-      (defaultOpts.allowParentSelection === undefined ||
-       defaultOpts.allowParentSelection === null) ?
-        true :
-        defaultOpts.allowParentSelection
-    );
-    this.allowFilter = (
-      (defaultOpts.allowFilter === undefined || defaultOpts.allowFilter === null) ?
-        true :
-        defaultOpts.allowFilter
-    );
-    this.filterCaseSensitive = (
-      (defaultOpts.filterCaseSensitive === undefined || defaultOpts.filterCaseSensitive === null) ?
-        false :
-        defaultOpts.filterCaseSensitive
-    );
-    this.filterPlaceholder = (defaultOpts.filterPlaceholder || 'Type here for filtering items...');
-    this.idField = (defaultOpts.idField || 'id');
-    this.textField = (defaultOpts.textField || 'id');
-    this.childrenField = (defaultOpts.childrenField || '');
-    this.expandMode = (defaultOpts.expandMode || ExpandMode.None);
+    this.maxVisibleItemCount = defaultOpts.maxVisibleItemCount || 0;
+    this.allowParentSelection =
+      defaultOpts.allowParentSelection === undefined ||
+      defaultOpts.allowParentSelection === null
+        ? true
+        : defaultOpts.allowParentSelection;
+    this.includeDirectEntities = defaultOpts.includeDirectEntities || false;
+    this.iterationThroughSelector = defaultOpts.iterationThroughSelector || 0;
+    this.allowFilter =
+      defaultOpts.allowFilter === undefined || defaultOpts.allowFilter === null
+        ? true
+        : defaultOpts.allowFilter;
+    this.filterCaseSensitive =
+      defaultOpts.filterCaseSensitive === undefined ||
+      defaultOpts.filterCaseSensitive === null
+        ? false
+        : defaultOpts.filterCaseSensitive;
+    this.filterPlaceholder =
+      defaultOpts.filterPlaceholder || "Type here for filtering items...";
+    this.idField = defaultOpts.idField || "id";
+    this.textField = defaultOpts.textField || "id";
+    this.childrenField = defaultOpts.childrenField || "";
+    this.expandMode = defaultOpts.expandMode || ExpandMode.None;
   }
 
   // tslint:disable-next-line:no-empty
@@ -190,7 +222,10 @@ export class TreeSelectComponent implements ControlValueAccessor {
 
   public clickedOutside() {
     if (!this.inputFocus) {
-      if (!this.haveFocus && this.isOpen || this.haveFocus && !this.isOpen) {
+      if (
+        (!this.haveFocus && this.isOpen) ||
+        (this.haveFocus && !this.isOpen)
+      ) {
         this.onTouched();
       }
       this.haveFocus = false;
@@ -262,23 +297,21 @@ export class TreeSelectComponent implements ControlValueAccessor {
     this.moreLoaded = !this.moreLoaded;
   }
 
-  private ProcessMatchFilterTreeItem(tree: SelectableItem, filter: string): boolean {
+  private ProcessMatchFilterTreeItem(
+    tree: SelectableItem,
+    filter: string
+  ): boolean {
     let result = false;
     if (tree && tree.children && tree.children.length > 0) {
       for (const child of tree.children) {
         result = this.ProcessMatchFilterTreeItem(child, filter) || result;
       }
     }
-    tree.matchFilter = this.filterCaseSensitive ?
-                      (
-                        tree.id.indexOf(filter) > -1 ||
-                        tree.text.indexOf(filter) > -1 ||
-                        result) :
-                      (
-                        tree.id.toLowerCase().indexOf(filter.toLowerCase()) > -1 ||
-                        tree.text.toLowerCase().indexOf(filter.toLowerCase()) > -1 ||
-                        result
-                      );
+    tree.matchFilter = this.filterCaseSensitive
+      ? tree.id.indexOf(filter) > -1 || tree.text.indexOf(filter) > -1 || result
+      : tree.id.toLowerCase().indexOf(filter.toLowerCase()) > -1 ||
+        tree.text.toLowerCase().indexOf(filter.toLowerCase()) > -1 ||
+        result;
     return tree.matchFilter;
   }
 }
